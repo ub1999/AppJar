@@ -9,6 +9,6 @@ with serial.Serial('COM3',9600) as ser:
         if ser.in_waiting:
             packet=ser.readlines()
             print("read from arduino:")
-            print(packet.decode('utf'))
+            print(packet.decode('utf')) #because arduino sends info in utf to serial, we want it to be understandable so wee decode
 
     
