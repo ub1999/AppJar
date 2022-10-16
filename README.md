@@ -1,1 +1,4 @@
 # AppJar
+### Dependencies:
+  - appJar
+  - Serial
