@@ -16,7 +16,7 @@ def select_port():
     return port_no
 #make sure you choose the correct COM# port for your own computer 
 
-with serial.Serial(select_port(),9600) as ser:
+with serial.Serial(select_port(),115200) as ser:
     #ser.open()
     print("You have connected to port",ser.portstr,"\n")
     ser.write("setup complete".encode('utf-8'))
