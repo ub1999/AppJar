@@ -10,6 +10,9 @@ import tkinter as tk
 from turtle import position, title, window_height, window_width
 import string
 import re
+from sys import platform
+
+
 
 def get_portlist():
     portlist=[]
@@ -23,9 +26,21 @@ def set_port_callback(dropdownitem:tk.StringVar,window: tk.Tk,label_item:tk.Labe
     label_item.config(text='Port is now: '+dropdownitem.get())
 
 def start_button_callback(DropDownItem:tk.StringVar, test_label:tk.Label,message='start'):
-    #this line: uses a regex.search to look for a match for COM# from the chosen dropdown value, group() returns the matched string
+    port_no=''
     
-    port_no=re.search(r'COM\d',DropDownItem.get()).group()
+    #write a code for linux laptops:
+    if platform == "linux" or platform == "linux2":
+    # linux
+       port_no='/dev/'+re.search(r"({')(\w+)('})",DropDownItem.get()).group(2)
+    elif platform == "darwin":
+        # OS X
+        print('yeah sorry I have no clue')
+    elif platform == "win32":
+    # Windows...
+        port_no=re.search(r'COM\d',DropDownItem.get()).group()
+        
+    print(port_no)
+    
     with serial.Serial(port_no,115200,timeout=2) as ser:
         print('connected to port',ser.portstr)
         print("setup complete")
