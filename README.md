@@ -10,4 +10,4 @@
     - First select the port from drop down menu, 
     - then click set port 
     - Space above start button shows what message was revieced by arduiono 
-    -click start button, or enter text and click "Send Message" button 
+    - click start button, or enter text and click "Send Message" button 
