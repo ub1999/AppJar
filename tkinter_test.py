@@ -1,6 +1,8 @@
 import string
 import tkinter as tk
 from turtle import position, window_height, window_width
+from asyncore import read
+
 
 
 root = tk.Tk()
@@ -40,8 +42,6 @@ transparency settings
 window.attributes('-alpha',0.5)
 """
 
-# keep the window displaying
-root.mainloop()
 
 '''
 Summary
@@ -54,3 +54,19 @@ Summary
     Use lift() and lower() methods to move the window up and down of the window stacking order.
     Use the iconbitmap() method to change the default icon of the window.
 '''
+
+start_button=tk.Button(
+    root,
+    text='Start',
+    width=25,
+    height=5,
+    bg='red',
+    fg='white',
+    #command=serial_test.send_message("Start \n") write a function that only sends a start message 
+)
+start_button.pack()
+# serial_message=tk.Entry(fg='black')
+# serial_message.pack()
+
+# keep the window displaying
+root.mainloop()
