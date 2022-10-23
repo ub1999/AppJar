@@ -14,7 +14,7 @@ setup_window.iconphoto(False,logo)
 screendim=(int(setup_window.winfo_screenwidth()),int(setup_window.winfo_screenheight()))
 pos=(screendim[0]/2,screendim[1]/2)
 window_width=300
-window_height=200
+window_height=300
 center_x=int(pos[0]-window_width/2)
 center_y=int(pos[1]-window_height/2)
 setup_window.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
@@ -38,5 +38,8 @@ button = tk.Button(setup_window , text = "set port" , command = lambda: startbut
 rec_label=tk.Label(setup_window,text='Sent:')
 rec_label.pack()
 start_button=tk.Button(setup_window,text='Start',command= lambda: startbutton_functions.start_button_callback(selected,rec_label)).pack()
-
+tk.Label(setup_window,text='\n').pack()
+textbox=tk.Entry(setup_window,text='Enter command here')
+textbox.pack()
+message_button=tk.Button(setup_window,text='Send Message',command= lambda: startbutton_functions.start_button_callback(selected,rec_label,message=textbox.get())).pack()
 setup_window.mainloop()

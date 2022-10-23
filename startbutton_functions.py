@@ -24,12 +24,14 @@ def set_port_callback(dropdownitem:tk.StringVar,window: tk.Tk,label_item:tk.Labe
 
 def start_button_callback(DropDownItem:tk.StringVar, test_label:tk.Label,message='start'):
     #this line: uses a regex.search to look for a match for COM# from the chosen dropdown value, group() returns the matched string
+    
     port_no=re.search(r'COM\d',DropDownItem.get()).group()
     with serial.Serial(port_no,115200,timeout=2) as ser:
         print('connected to port',ser.portstr)
         print("setup complete")
         #check if something is in the serial input buffer
         if ser.in_waiting==0:
+            print('Sending:'+message)
             recieved_packet=ser.read_until()
             message=message+'\n'
             ser.write(message.encode('utf-8'))
