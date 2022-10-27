@@ -46,7 +46,7 @@ def set_port_callback(DropDownItem:tk.StringVar,window: tk.Tk,label_item:tk.Labe
 def start_button_callback(DropDownItem:tk.StringVar, test_label:tk.Label,message='start'):
     ser1.open()
     #somehow everything fallsapart without this i dont understand why
-    recieved_packet=ser1.read_until()
+    recieved_packet=ser1.read_until().decode('utf')
     
     message=message+'\n'
     ser1.write(message.encode('utf-8'))
@@ -63,10 +63,18 @@ def start_button_callback(DropDownItem:tk.StringVar, test_label:tk.Label,message
         if ser1.in_waiting:   
             while ser1.in_waiting:
                 #print('in read buffer a packet')
-                recieved_packet=ser1.read_until().decode('utf')
-                recieved_packet=str(re.sub(r'[\n\r]',"",recieved_packet))
-                test_label.config(text=recieved_packet) 
-                print(recieved_packet)
+                recieved_packet=recieved_packet + ser1.read_until().decode('utf')
+                recieved_packet=str(re.sub(r'[\n]',"",recieved_packet,count=1))
+            recieved_packet=str(re.sub(r'rec:',"",recieved_packet))
+            test_label.config(text=recieved_packet)
+            #save all exchanged messages into this file 
+            f=open('message_logs.txt','w')
+            #first overwrite pre-exiting content with rec:
+            f.write('rec:\n');f.close()
+            #then only append whatever messages were recieved from arduino over this session 
+            f=open('message_logs.txt','a')
+            f.write(recieved_packet)
+            f.close()
             break
         else:
             pass
