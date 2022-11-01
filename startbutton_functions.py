@@ -14,6 +14,7 @@ from sys import platform
 from datetime import datetime
 
 ser1=serial.Serial()
+recieved_packet=''
 
 def get_portlist():
     portlist=[]
@@ -38,7 +39,7 @@ def set_port_callback(DropDownItem:tk.StringVar,window: tk.Tk,label_item:tk.Labe
     # Windows...
         port_no=re.search(r'COM\d',DropDownItem.get()).group()
     ser1.port=port_no
-    ser1.timeout=1
+    ser1.timeout=0.9
     ser1.close()
     label_item.config(text='Port is now: '+port_no)
     print('connected to port',ser1.portstr)
@@ -46,16 +47,14 @@ def set_port_callback(DropDownItem:tk.StringVar,window: tk.Tk,label_item:tk.Labe
     ser1.open()
     #save all exchanged messages into this file 
     f=open('message_logs.txt','w')
-
-def start_button_callback(DropDownItem:tk.StringVar, test_label:tk.Label,message='start'):
-    
     #somehow everything fallsapart without this i dont understand why
     recieved_packet=ser1.read_until().decode('utf')
-    
+
+def start_button_callback(DropDownItem:tk.StringVar, test_label:tk.Label,message='start'):    
     message=message+'\n'
     ser1.write(message.encode('utf-8'))
     print('Sending:'+message)
-    
+    recieved_packet=''
     #wait for out buffer to be empty
     while ser1.out_waiting:
         continue
