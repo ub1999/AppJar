@@ -11,6 +11,7 @@ from turtle import position, title, window_height, window_width
 import string
 import re
 from sys import platform
+from datetime import datetime
 
 ser1=serial.Serial()
 
@@ -42,9 +43,12 @@ def set_port_callback(DropDownItem:tk.StringVar,window: tk.Tk,label_item:tk.Labe
     label_item.config(text='Port is now: '+port_no)
     print('connected to port',ser1.portstr)
     print("setup complete")
+    ser1.open()
+    #save all exchanged messages into this file 
+    f=open('message_logs.txt','w')
 
 def start_button_callback(DropDownItem:tk.StringVar, test_label:tk.Label,message='start'):
-    ser1.open()
+    
     #somehow everything fallsapart without this i dont understand why
     recieved_packet=ser1.read_until().decode('utf')
     
@@ -55,9 +59,7 @@ def start_button_callback(DropDownItem:tk.StringVar, test_label:tk.Label,message
     #wait for out buffer to be empty
     while ser1.out_waiting:
         continue
-    
     #print(r'write buffer empty')
-
     while 1: 
     #print(r'read buffer not empty',ser1.in_waiting)
         if ser1.in_waiting:   
@@ -66,18 +68,18 @@ def start_button_callback(DropDownItem:tk.StringVar, test_label:tk.Label,message
                 recieved_packet=recieved_packet + ser1.read_until().decode('utf')
                 recieved_packet=str(re.sub(r'[\n]',"",recieved_packet,count=1))
             recieved_packet=str(re.sub(r'rec:',"",recieved_packet))
-            test_label.config(text=recieved_packet)
-            #save all exchanged messages into this file 
-            f=open('message_logs.txt','w')
+            test_label.config(text="rec:"+recieved_packet)
+
             #first overwrite pre-exiting content with rec:
-            f.write('rec:\n');f.close()
+            #f.write('rec:\n');f.close()
             #then only append whatever messages were recieved from arduino over this session 
             f=open('message_logs.txt','a')
-            f.write(recieved_packet)
+            # time object + recieved data into logfile
+            f.write(str(datetime.now().time())+':'+recieved_packet+'\n')
             f.close()
             break
         else:
             pass
-    ser1.close()
+ser1.close()
 
         
