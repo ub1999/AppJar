@@ -46,7 +46,7 @@ def set_port_callback(DropDownItem:tk.StringVar,window: tk.Tk,label_item:tk.Labe
     print("setup complete")
     ser1.open()
     #save all exchanged messages into this file 
-    f=open('message_logs.txt','w')
+    #f=open('message_logs.txt','w')
     #somehow everything fallsapart without this i dont understand why
     recieved_packet=ser1.read_until().decode('utf')
 
