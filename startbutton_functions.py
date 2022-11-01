@@ -38,7 +38,7 @@ def set_port_callback(DropDownItem:tk.StringVar,window: tk.Tk,label_item:tk.Labe
     # Windows...
         port_no=re.search(r'COM\d',DropDownItem.get()).group()
     ser1.port=port_no
-    ser1.timeout=2
+    ser1.timeout=1
     ser1.close()
     label_item.config(text='Port is now: '+port_no)
     print('connected to port',ser1.portstr)
