@@ -20,7 +20,8 @@ def select_port():
 with serial.Serial(select_port(),115200) as ser:
         #ser.open()
         ser.timeout=1
-        #packet=ser.read_until()
+        #doesnt read the first sent packet unless i have this in there
+        packet=ser.read_until()
         print("You have connected to port",ser.portstr,"\n")
         ser.write("setup complete".encode('utf-8'))
         print("setup complete")
