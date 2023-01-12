@@ -2,6 +2,7 @@
 #imports
 from asyncore import read
 from cgitb import text
+from stringprep import in_table_a1
 import serial
 import serial.tools.list_ports as port_list
 import time
@@ -79,6 +80,22 @@ def start_button_callback(DropDownItem:tk.StringVar, test_label:tk.Label,message
             break
         else:
             pass
+
+def listen_button_callback(test_label:tk.Label):
+    #recieved_packet=''
+    while 1:
+        try:
+            recieved_packet=ser1.readline()
+            recieved_packet=float(recieved_packet[0:len(recieved_packet)-2].decode("utf"))
+            print(recieved_packet)
+            test_label.config(text="rec:"+recieved_packet)
+            f=open('message_logs.txt','a')
+            # time object + recieved data into logfile
+            f.write(str(datetime.now().time())+':'+recieved_packet+'\n')
+            f.close()
+        except:
+            print ("Keyboard Interrupt")
+            break
 ser1.close()
 
         
