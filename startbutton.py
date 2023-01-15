@@ -42,5 +42,12 @@ tk.Label(setup_window,text='\n').pack()
 textbox=tk.Entry(setup_window,text='Enter command here')
 textbox.pack()
 message_button=tk.Button(setup_window,text='Send Message',command= lambda: startbutton_functions.start_button_callback(selected,rec_label,message=textbox.get())).pack()
-listen_button=tk.Button(setup_window,text='Listen',command= lambda: startbutton_functions.listen_button_callback(rec_label)).pack()
+
+
+
+# create a button
+listen_button = tk.Button(setup_window,text="Listen", command=lambda: startbutton_functions.listen_button_callback())
+listen_button.pack()
+
+#listen_button=tk.Button(setup_window,text='Listen',command= lambda: startbutton_functions.listen_button_callback(rec_label)).pack()
 setup_window.mainloop()

@@ -1,7 +1,10 @@
 
 #imports
+import asyncio
 from asyncore import read
 from cgitb import text
+from lib2to3.pgen2.token import STRING
+from pickle import TRUE
 from stringprep import in_table_a1
 import serial
 import serial.tools.list_ports as port_list
@@ -11,6 +14,8 @@ import tkinter as tk
 from turtle import position, title, window_height, window_width
 import string
 import re
+import asyncio
+import threading
 from sys import platform
 from datetime import datetime
 
@@ -80,22 +85,58 @@ def start_button_callback(DropDownItem:tk.StringVar, test_label:tk.Label,message
             break
         else:
             pass
+#create listen window
+def create_listen_window():
+    listen_window=tk.Tk()
+    listen_window.title("Incoming Data")
+    listen_window.geometry("300x300")
+    listen_label=tk.Label(listen_window,text="incoming:")
+    listen_label.pack()
+    listen_button = tk.Button(listen_window,text="Listen", command=lambda: startbutton_functions.listen_button_callback(listen_label))
+    listen_button.pack()
 
-def listen_button_callback(test_label:tk.Label):
-    #recieved_packet=''
-    while 1:
-        try:
+def listen_button_callback():
+    listen_window=tk.Tk()
+    listen_window.title("Incoming Data")
+    listen_window.geometry("300x300")
+    listen_label=tk.Label(listen_window,text="incoming:")
+    listen_label.pack()
+    print("creating listen thread")
+    x=threading.Thread(target=listen_coro,args=(listen_label,),daemon=True)
+    x.start()
+    print("Thread Started")
+
+    #create a new display function because I cant display the data rn 
+    with open('message_logs.txt','r') as f:
+    # time object + recieved data into logfile
+        txt=''
+        for line in f.readlines()[-1:]:
+            txt=[txt,line]
+        listen_label.config(text=str(txt))
+    
+
+
+
+def listen_coro(test_label:tk.Label):
+    #listen to the aforementioned port, asynchornously
+    while True: 
+        if ser1.inWaiting():
             recieved_packet=ser1.readline()
             recieved_packet=float(recieved_packet[0:len(recieved_packet)-2].decode("utf"))
             print(recieved_packet)
-            test_label.config(text="rec:"+recieved_packet)
-            f=open('message_logs.txt','a')
-            # time object + recieved data into logfile
-            f.write(str(datetime.now().time())+':'+recieved_packet+'\n')
-            f.close()
-        except:
-            print ("Keyboard Interrupt")
-            break
+            #test_label.config(text=str(recieved_packet))
+            save_data_coro(str(recieved_packet))
+        else :
+            time.sleep(5)
+
+def save_data_coro(recieved_packet):
+    #do something
+    f=open('message_logs.txt','a')
+    # time object + recieved data into logfile
+    f.write(str(datetime.now().time())+':'+recieved_packet+'\n')
+    f.close()
+
+
 ser1.close()
 
         
