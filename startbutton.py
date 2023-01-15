@@ -34,10 +34,14 @@ drop_down.pack()
 setup_label=tk.Label(setup_window,text="port is :")
 setup_label.pack()
 button = tk.Button(setup_window , text = "set port" , command = lambda: startbutton_functions.set_port_callback(selected,setup_window,setup_label)).pack() 
-
-rec_label=tk.Label(setup_window,text='Sent:')
+rec_label=tk.Label(setup_window,bg='white',text='Sent:')
 rec_label.pack()
-start_button=tk.Button(setup_window,text='Start',command= lambda: startbutton_functions.start_button_callback(selected,rec_label)).pack()
+#start button
+start_button=tk.Button(setup_window,text='Start',bg='green',command= lambda: startbutton_functions.start_button_callback(selected,rec_label)).place(relx=0.25,rely=0.40)
+#stop button 
+stop_button=tk.Button(setup_window,text='Stop',bg='red',command= lambda: startbutton_functions.start_button_callback(selected,rec_label,message="stop")).place(relx=0.62,rely=0.4)
+
+#custon text button 
 tk.Label(setup_window,text='\n').pack()
 textbox=tk.Entry(setup_window,text='Enter command here')
 textbox.pack()

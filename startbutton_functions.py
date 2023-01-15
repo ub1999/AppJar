@@ -3,6 +3,7 @@
 import asyncio
 from asyncore import read
 from cgitb import text
+from collections import deque
 from lib2to3.pgen2.token import STRING
 from pickle import TRUE
 from stringprep import in_table_a1
@@ -52,7 +53,8 @@ def set_port_callback(DropDownItem:tk.StringVar,window: tk.Tk,label_item:tk.Labe
     print("setup complete")
     ser1.open()
     #save all exchanged messages into this file 
-    #f=open('message_logs.txt','w')
+    f=open('message_logs.txt','w')
+    f.close()
     #somehow everything fallsapart without this i dont understand why
     recieved_packet=ser1.read_until().decode('utf')
 
@@ -101,36 +103,48 @@ def listen_button_callback():
     listen_window.geometry("300x300")
     listen_label=tk.Label(listen_window,text="incoming:")
     listen_label.pack()
-    print("creating listen thread")
-    x=threading.Thread(target=listen_coro,args=(listen_label,),daemon=True)
-    x.start()
-    print("Thread Started")
+    #queue containing listened values
+    q=deque()
+    # start a thread that listening to messages coming into the port. I used threads so that the rest of the GUI can be 
+    # interacted with during the while loop. 
+    listen_thread=threading.Thread(target=listen_coro,args=(q,),daemon=True)
+    listen_thread.start()
+    print("started: listen thread")
 
-    #create a new display function because I cant display the data rn 
-    with open('message_logs.txt','r') as f:
-    # time object + recieved data into logfile
-        txt=''
-        for line in f.readlines()[-1:]:
-            txt=[txt,line]
-        listen_label.config(text=str(txt))
+    #the following thread just updates the GUI with the newest info 
+    update_thread=threading.Thread(target=update_listen_window,args=(listen_label,q,),daemon=True)
+    update_thread.start()
+    print("started: Screen update thread ")
+   
+    listen_window.mainloop()
+
     
 
+def update_listen_window(test_label:tk.Label,q):
+    #will update the listen window with the last 3 entries in listen window
+    while True:
+       #if something new was added to queue, display it
+       if len(q)>0:
+           test_label.config(text=test_label.cget('text')+'\n'+ str(datetime.now()) + ' : ' + q.popleft())
+       else:
+           time.sleep(1) #1 sec sleep if nothing in queue
 
 
-def listen_coro(test_label:tk.Label):
-    #listen to the aforementioned port, asynchornously
+def listen_coro(q):
+    #listen to the port and save the incoming data and add it to q then save it in message_logs.txt
     while True: 
         if ser1.inWaiting():
             recieved_packet=ser1.readline()
-            recieved_packet=float(recieved_packet[0:len(recieved_packet)-2].decode("utf"))
+            recieved_packet=recieved_packet[0:len(recieved_packet)-2].decode("utf")
             print(recieved_packet)
+            q.append(recieved_packet)
             #test_label.config(text=str(recieved_packet))
             save_data_coro(str(recieved_packet))
         else :
-            time.sleep(5)
+            time.sleep(1) # 1 sec sleep if nothing in serial buffer. 
 
 def save_data_coro(recieved_packet):
-    #do something
+    #saves the recieved packet string into a txt file
     f=open('message_logs.txt','a')
     # time object + recieved data into logfile
     f.write(str(datetime.now().time())+':'+recieved_packet+'\n')
